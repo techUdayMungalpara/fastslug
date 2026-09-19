@@ -1,0 +1,53 @@
+{
+  "name": "fastslug",
+  "version": "1.0.0",
+  "description": "Tiny, zero-dependency slug generator for English text, symbols, and currency signs. Turns any string into a URL-safe slug: \"Café & Crème $5 🚀\" → \"cafe-and-creme-dollar-5\".",
+  "keywords": [
+    "slug",
+    "slugify",
+    "slug-generator",
+    "url-slug",
+    "permalink",
+    "remove-accents"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "llms.txt",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "test": "node --test 'test/*.test.ts'",
+    "test:smoke": "node test/smoke.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint:pkg": "npx --yes publint --strict && npx --yes @arethetypeswrong/cli --pack . --profile esm-only",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build && npm run test:smoke"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.5",
+    "typescript": "^5.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/techUdayMungalpara/fastslug.git"
+  },
+  "homepage": "https://github.com/techUdayMungalpara/fastslug#readme",
+  "bugs": {
+    "url": "https://github.com/techUdayMungalpara/fastslug/issues"
+  }
+}

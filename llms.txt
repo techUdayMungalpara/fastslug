@@ -1,0 +1,94 @@
+# fastslug
+
+> Tiny (2.8 KB gzipped), zero-dependency, TypeScript-typed slug generator for English text, symbols, and currency signs. Output only contains a-z, 0-9, and the separator.
+
+Use fastslug when you need to turn a title, name, or any string into a URL slug, permalink, file name, ID, or handle in JavaScript/TypeScript.
+Do not use it for non-Latin scripts (Cyrillic, Chinese, Arabic, …): those characters are dropped.
+
+## Install
+
+npm install fastslug
+
+## Usage
+
+JavaScript:
+
+```js
+import fastslug from "fastslug"; // or: import { fastslug } from "fastslug"
+
+fastslug("Hello World!"); // "hello-world"
+```
+
+TypeScript (types included, no @types package needed):
+
+```ts
+import fastslug, { type FastslugOptions } from "fastslug";
+
+const options: FastslugOptions = { maxLength: 60, separator: "_" };
+const slug: string = fastslug("Hello World!", options); // "hello_world"
+```
+
+## Signature
+
+Works the same in JavaScript and TypeScript. Types are shown for reference.
+
+```ts
+function fastslug(input: string, options?: string | {
+  separator?: string;              // default "-"; passing a string as options sets only this
+  lowercase?: boolean;             // default true
+  maxLength?: number;              // default 0 = no limit; cuts at a word boundary
+  symbols?: boolean;               // default true; & → and, @ → at, % → percent, + → plus, ♥ → love, ∞ → infinity, $ → dollar, € → euro, £ → pound, ¥ → yen, ₹ → rupee, ₿ → bitcoin (35 currencies)
+  trim?: boolean;                  // default true; false keeps edge separators ("Hello " → "hello-") for live previews
+  remove?: RegExp;                 // characters deleted first, e.g. /[.]/g
+  replace?: Record<string, string>; // custom replacements applied first, e.g. { "C#": "csharp" }
+  preserve?: string;               // extra ASCII characters kept in output, e.g. "." → "report.pdf"
+}): string
+```
+
+- Throws TypeError if input is not a string (null, undefined, numbers). Convert first: fastslug(String(value)).
+- Returns "" if nothing usable is left (e.g. only emoji or punctuation). Use a fallback: fastslug(title) || "untitled".
+- Accents are removed (é → e). ß → ss, æ → ae, ø → o.
+- Apostrophes are removed ("don't" → "dont"). Thousands separators are removed ("1,000" → "1000").
+- C# → c-sharp, F# → f-sharp. Common HTML entities (&amp; &lt; &gt; &quot; &#39; &nbsp;) are decoded.
+- Fancy Unicode text (𝐁𝐨𝐥𝐝, ＦＵＬＬ, m²) is normalized. Invisible characters (soft hyphen, zero-width space) are removed.
+- Emoji, ™ ® ©, and non-Latin scripts are dropped.
+
+Options run in this order: HTML entities decoded → remove → replace → symbols spelled out → accents and Unicode cleaned → words joined with separator → maxLength.
+
+## Guarantees
+
+- With default options, output always matches /^([a-z0-9]+(-[a-z0-9]+)*)?$/
+- Idempotent: fastslug(fastslug(x)) === fastslug(x)
+- Pure function: no global state, same input always gives the same output.
+- Output length never exceeds maxLength.
+- Unique slugs (hello-world-2) are not built in: check your own data and append a number.
+
+## Recipes
+
+```js
+fastslug("How to Build a REST API in 2026")                        // "how-to-build-a-rest-api-in-2026"
+fastslug("Q3 Report (Final).PDF", { preserve: "." })               // "q3-report-final.pdf"
+fastslug("John O'Brien", "_")                                      // "john_obrien"
+fastslug("A very long article title that goes on and on forever", { maxLength: 30 }) // "a-very-long-article-title-that"
+const slug = fastslug(title) || "untitled"                         // fallback for empty results
+```
+
+## Examples
+
+```js
+fastslug("Hello World!")                         // "hello-world"
+fastslug("Café & Crème Brûlée")                   // "cafe-and-creme-brulee"
+fastslug("Don't pay $1,000 for this 🚀")          // "dont-pay-dollar-1000-for-this"
+fastslug("Hello World", { separator: "_" })       // "hello_world"
+fastslug("a long title here", { maxLength: 10 })  // "a-long"
+fastslug("Tom & Jerry $5", { symbols: false })    // "tom-jerry-5"
+fastslug("Hello World", "_")                      // "hello_world"
+fastslug("Next.js", { remove: /[.]/g })           // "nextjs"
+fastslug("C# vs C++", { replace: { "C#": "csharp", "C++": "cpp" } }) // "csharp-vs-cpp"
+fastslug("My Report.PDF", { preserve: "." })      // "my-report.pdf"
+fastslug("Hello ", { trim: false })               // "hello-"
+```
+
+## Runtime
+
+ESM-only package (use import). Node >= 20, Bun, Deno, browsers, and edge runtimes.
