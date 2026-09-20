@@ -129,7 +129,7 @@ fastslug(String(123)); // "123"
 
 Currency signs (all 35): `$ ¢ ¤ € £ ¥ ₹ ₨ ₩ ₽ ₺ ₤ ₱ ₪ ₫ ₦ ฿ ₴ ₿ ₠ ₢ ₣ ₥ ₧ ₭ ₮ ₯ ₰ ₲ ₳ ₵ ₸ ₼ ₾ ﷼`, including fullwidth forms like `＄`.
 
-Built for English: characters from non-Latin scripts are dropped.
+Built for English only.
 
 ## License
 
